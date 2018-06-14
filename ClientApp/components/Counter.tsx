@@ -1,29 +1,31 @@
-import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
+import * as React from "react";
+import { RouteComponentProps } from "react-router";
 
-interface CounterState {
+interface ICounterState {
     currentCount: number;
 }
 
-export class Counter extends React.Component<RouteComponentProps<{}>, CounterState> {
-    constructor() {
-        super();
+export class Counter extends React.Component<RouteComponentProps<{}>, ICounterState> {
+    constructor(props: RouteComponentProps<{}>) {
+        super(props);
         this.state = { currentCount: 0 };
     }
 
-    public render() {
-        return <div>
-            <h1>Counter</h1>
+    public render(): JSX.Element {
+        return (
+            <div>
+                <h1>Counter</h1>
 
-            <p>This is a simple example of a React component.</p>
+                <p>This is a simple example of a React component.</p>
 
-            <p>Current count: <strong>{ this.state.currentCount }</strong></p>
+                <p>Current count: <strong>{this.state.currentCount}</strong></p>
 
-            <button onClick={ () => { this.incrementCounter() } }>Increment</button>
-        </div>;
+                <button onClick={() => { this.incrementCounter(); }}>Increment</button>
+            </div>
+        );
     }
 
-    incrementCounter() {
+    incrementCounter(): void {
         this.setState({
             currentCount: this.state.currentCount + 1
         });

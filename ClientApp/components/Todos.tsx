@@ -13,8 +13,8 @@ interface ITodo {
 }
 
 export class Todos extends React.Component<RouteComponentProps<{}>, ITodos> {
-    constructor() {
-        super();
+    constructor(props: RouteComponentProps<{}>) {
+        super(props);
         this.state = { todos: [], loading: true };
 
         fetch("api/Todo/TodoGet")
