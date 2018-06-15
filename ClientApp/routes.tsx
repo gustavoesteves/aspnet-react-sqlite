@@ -6,9 +6,11 @@ import { FetchData } from "./components/FetchData";
 import { Todos } from "./components/Todos";
 import { Counter } from "./components/Counter";
 
-export const routes: JSX.Element = <Layout>
-    <Route exact path="/" component={Home} />
-    <Route path="/counter" component={Counter} />
-    <Route path="/fetchdata" component={FetchData} />
-    <Route path="/todo" component={Todos} />
-</Layout>;
+export const routes: JSX.Element = (
+    <Layout>
+        <Route exact path="/" component={Home} />
+        <Route path="/counter" component={Counter} />
+        <Route path="/fetchdata" component={FetchData} />
+        <Route path="/todo" component={Todos} />
+    </Layout>
+);
