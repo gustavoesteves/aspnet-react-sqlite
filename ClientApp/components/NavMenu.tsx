@@ -4,45 +4,33 @@ import { Link, NavLink } from "react-router-dom";
 export class NavMenu extends React.Component<{}, {}> {
     public render(): JSX.Element {
         return (
-            <div className="main-nav">
-                <div className="navbar navbar-inverse">
-                    <div className="navbar-header">
-                        <button type="button" className="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                            <span className="sr-only">Toggle navigation</span>
-                            <span className="icon-bar"></span>
-                            <span className="icon-bar"></span>
-                            <span className="icon-bar"></span>
-                            <span className="icon-bar"></span>
-                        </button>
-                        <Link className="navbar-brand" to={"/"}>ASP.Net - React - Sqlite</Link>
-                    </div>
-                    <div className="clearfix"></div>
-                    <div className="navbar-collapse collapse">
-                        <ul className="nav navbar-nav">
-                            <li>
-                                <NavLink to={"/"} exact activeClassName="active">
-                                    <span className="glyphicon glyphicon-home"></span> Home
+            <nav className="col-md-2 d-none d-md-block bg-light sidebar">
+                <div className="sidebar-sticky">
+                    <ul className="nav flex-column">
+                        <li className="nav-item">
+                            <NavLink to={"/"} className="nav-link" exact activeClassName="active">
+                                Home
                             </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to={"/counter"} activeClassName="active">
-                                    <span className="glyphicon glyphicon-education"></span> Counter
+                        </li>
+                        <li className="nav-item">
+                            <NavLink to={"/counter"} className="nav-link" activeClassName="active">
+                                <span className="glyphicon glyphicon-education"></span>
+                                Counter
                             </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to={"/fetchdata"} activeClassName="active">
-                                    <span className="glyphicon glyphicon-th-list"></span> Fetch data
+                        </li>
+                        <li className="nav-item">
+                            <NavLink to={"/fetchdata"} className="nav-link" activeClassName="active">
+                                <span className="glyphicon glyphicon-th-list"></span> Fetch data
                             </NavLink>
-                            </li>
-                            <li>
-                                <NavLink to={"/todo"} activeClassName="active">
-                                    <span className="glyphicon glyphicon-ok"></span> Todo
+                        </li>
+                        <li className="nav-item">
+                            <NavLink to={"/todo"} className="nav-link" activeClassName="active">
+                                <span className="glyphicon glyphicon-ok"></span> Todo
                             </NavLink>
-                            </li>
-                        </ul>
-                    </div>
+                        </li>
+                    </ul>
                 </div>
-            </div>
+            </nav>
         );
     }
 }

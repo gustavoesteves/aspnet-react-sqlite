@@ -4,6 +4,40 @@
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
+    "@fortawesome/fontawesome-common-types": {
+      "version": "0.2.0",
+      "resolved": "https://registry.npmjs.org/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.0.tgz",
+      "integrity": "sha512-raAiqWiXGZeQpFzz5fpLa6EQR3kSAK1cT5qaUanB9h4FatXvKEOPutDyeGQsF0hRtGfMb518Mzc7+LjBPDJCOg==",
+      "dev": true
+    },
+    "@fortawesome/fontawesome-svg-core": {
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-1.2.0.tgz",
+      "integrity": "sha512-Wqh3kxcxeFCCLN3LevXJaZiBZ9V8ggOUpcQC+TBIaQIPNtMmUwsghLVpI6ojYKjoIvKi1nyAR9wpOTUVoxl4rA==",
+      "dev": true,
+      "requires": {
+        "@fortawesome/fontawesome-common-types": "^0.2.0"
+      }
+    },
+    "@fortawesome/free-solid-svg-icons": {
+      "version": "5.1.0",
+      "resolved": "https://registry.npmjs.org/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-5.1.0.tgz",
+      "integrity": "sha512-MijNhBFEporjnyg1BDnyBWwypFa+RkmQFqX94NZa7xWGIKirvujw2JG0BRR9jQZPFHcI4pRzhXMxBxUUi786yA==",
+      "dev": true,
+      "requires": {
+        "@fortawesome/fontawesome-common-types": "^0.2.0"
+      }
+    },
+    "@fortawesome/react-fontawesome": {
+      "version": "0.1.0",
+      "resolved": "https://registry.npmjs.org/@fortawesome/react-fontawesome/-/react-fontawesome-0.1.0.tgz",
+      "integrity": "sha512-CFulvjNIz/Z8SQ/Wikm8iPCiYDMVJKGVVh+9oxESpOgN8TIIK+bYOGv4HjOhjKKpKEHmns3n5vC/m6ormM8Y7A==",
+      "dev": true,
+      "requires": {
+        "humps": "^2.0.1",
+        "prop-types": "^15.5.10"
+      }
+    },
     "@types/history": {
       "version": "4.6.2",
       "resolved": "https://registry.npmjs.org/@types/history/-/history-4.6.2.tgz",
@@ -2540,6 +2574,12 @@
       "version": "1.0.0",
       "resolved": "https://registry.npmjs.org/https-browserify/-/https-browserify-1.0.0.tgz",
       "integrity": "sha1-7AbBDgo0wPL68Zn3/X/Hj//QPHM=",
+      "dev": true
+    },
+    "humps": {
+      "version": "2.0.1",
+      "resolved": "https://registry.npmjs.org/humps/-/humps-2.0.1.tgz",
+      "integrity": "sha1-3QLqYIG9BWjcXQcxhEY5V7qe+ao=",
       "dev": true
     },
     "iconv-lite": {

@@ -1,10 +1,16 @@
 import "./css/site.css";
 import "bootstrap";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleDown, faAngleUp, faCheck, faPlus } from "@fortawesome/free-solid-svg-icons";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
 import { BrowserRouter } from "react-router-dom";
 import * as RoutesModule from "./routes";
+
+library.add(faAngleDown, faAngleUp, faCheck, faPlus);
+
 let routes: JSX.Element = RoutesModule.routes;
 
 function renderApp(): void {
