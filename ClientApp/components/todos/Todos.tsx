@@ -3,35 +3,10 @@ import { RouteComponentProps } from "react-router";
 import "isomorphic-fetch";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-enum priorityTask {
-    urgent,
-    attention,
-    relax,
-    none
-}
-
-enum orderBy {
-    description,
-    priotity,
-    date
-}
-
-interface ITodos {
-    todos: ITodo[];
-    loading: boolean;
-    textAdd: string;
-    newTodo: boolean;
-    angle: boolean;
-    orderBy: orderBy;
-}
-
-interface ITodo {
-    id: number;
-    text: string;
-    date: Date;
-    priority: number;
-    active: boolean;
-}
+import { ITodo, ITodos, orderBy, priorityTask } from "./TodosProps";
+import { TodosOrderBy } from "./TodosOrderBy";
+import { TodosAdd } from "./TodosAdd";
+import { text } from "@fortawesome/fontawesome-svg-core";
 
 export class Todos extends React.Component<RouteComponentProps<{}>, ITodos> {
     constructor(props: RouteComponentProps<{}>) {
@@ -45,29 +20,35 @@ export class Todos extends React.Component<RouteComponentProps<{}>, ITodos> {
             orderBy: orderBy.description
         };
 
-        this.todoGet = this.todoGet.bind(this);
-        this.todoPostAdd = this.todoPostAdd.bind(this);
-        this.activeDone = this.activeDone.bind(this);
+        this.Get = this.Get.bind(this);
+        this.Post = this.Post.bind(this);
+        this.PostActive = this.PostActive.bind(this);
+        this.PostChangeLine = this.PostChangeLine.bind(this);
 
-        this.textAddChange = this.textAddChange.bind(this);
-        this.todoEnter = this.todoEnter.bind(this);
         this.new = this.new.bind(this);
-        this.editText = this.editText.bind(this);
-        this.radioChange = this.radioChange.bind(this);
-        this.orderBy = this.orderBy.bind(this);
+        this.handleChangeText = this.handleChangeText.bind(this);
+        this.handleEscText = this.handleEscText.bind(this);
+        this.handleRadioChange = this.handleRadioChange.bind(this);
+        this.handleEditTable = this.handleEditTable.bind(this);
+        this.handleActive = this.handleActive.bind(this);
+        this.handleAngle = this.handleAngle.bind(this);
+        this.handleChangeLine = this.handleChangeLine.bind(this);
 
-        this.todoGet(orderBy.description, false);
+        this.Get(orderBy.description, false);
     }
 
-    todoGet(_orderby: number, _ascend: boolean): void {
+    /*****************
+   * CRUD Operations
+   ****************/
+
+    Get(_orderby: number, _ascend: boolean): void {
         fetch("api/Todo/TodoGet/" + _orderby + "/'" + _ascend)
             .then(response => response.json() as Promise<ITodo[]>)
             .then(data => {
                 this.setState({ todos: data, loading: false });
             });
     }
-
-    todoPostAdd(_priority: priorityTask): void {
+    Post(_priority: priorityTask): void {
         fetch("api/Todo/TodoAdd", {
             method: "POST",
             body: JSON.stringify({
@@ -81,12 +62,11 @@ export class Todos extends React.Component<RouteComponentProps<{}>, ITodos> {
             .catch(error => console.error("Error:", error))
             .then(response => {
                 console.log("Success:", response);
-                this.todoGet(0, true);
+                this.Get(0, true);
             });
     }
-
-    activeDone(_id: number, _active: boolean): void {
-        fetch("api/Todo/TodoActive/" + _id + "/" + _active, {
+    PostActive(_id: number): void {
+        fetch("api/Todo/TodoActive/" + _id, {
             method: "POST",
             headers: new Headers({
                 "Content-Type": "application/json"
@@ -95,92 +75,105 @@ export class Todos extends React.Component<RouteComponentProps<{}>, ITodos> {
             .catch(error => console.error("Error:", error))
             .then(response => {
                 console.log("Success:", response);
-                this.todoGet(0, true);
+                this.Get(0, true);
+            });
+    }
+    PostChangeLine(_id: number, _text: string): void {
+        fetch("api/Todo/TodoEditText/" + _id + "/" + _text, {
+            method: "POST",
+            headers: new Headers({
+                "Content-Type": "application/json"
+            })
+        }).then()
+            .catch(error => console.error("Error:", error))
+            .then(response => {
+                console.log("Success:", response);
+                this.Get(this.state.orderBy, this.state.angle);
             });
     }
 
-    textAddChange(event: React.FormEvent<HTMLInputElement>): void {
-        this.setState({ textAdd: event.currentTarget.value });
-    }
-
-    todoEnter(event: React.KeyboardEvent<HTMLInputElement>): void {
-        if (event.key === "Escape") {
-            this.setState({ newTodo: false });
-        }
-    }
+    /**************
+     * Event change
+    **************/
 
     new(): void {
         this.setState({ newTodo: true });
     }
-
-    radioChange(_priority: priorityTask): void {
-        this.todoPostAdd(_priority);
+    handleChangeText(value: string): void {
+        this.setState({ textAdd: value });
+    }
+    handleEscText(): void {
         this.setState({ newTodo: false });
     }
-
-    editText(_id: number): void {
-        console.log("funfou " + _id);
+    handleRadioChange(priority: priorityTask): void {
+        this.Post(priority);
+        this.setState({ newTodo: false });
     }
-
-    orderBy(_orderby: number): void {
-        this.setState({ orderBy: _orderby });
-        this.todoGet(_orderby, false);
+    handleEditTable(_id: number): ITodo[] {
+        let _result: ITodo[] = this.state.todos;
+        _result.forEach(x => {
+            if (x.id === _id) {
+                x.editing = true;
+            } else { x.editing = false; }
+        });
+        this.setState({ todos: _result });
+        return _result.filter(x => x.id === _id);
+    }
+    handleActive(_id: number): void {
+        let _result: ITodo[] = this.state.todos;
+        _result.forEach(x => {
+            if (x.id === _id) {
+                x.active = !x.active;
+            }
+        });
+        this.setState({ todos: _result });
+        this.PostActive(_id);
+    }
+    handleAngle(_order: orderBy): void {
+        let _result: boolean = this.state.angle;
+        if (_order !== this.state.orderBy) {
+            this.setState({ orderBy: _order, angle: true });
+        } else {
+            this.setState({ angle: !_result });
+        }
+        this.Get(_order, this.state.angle);
+    }
+    handleChangeLine(_id: number, _text: string, key: string): void {
+        let _result: ITodo[] = this.state.todos;
+        _result.forEach(x => {
+            if (x.id === _id) {
+                x.editing = false;
+            }
+        });
+        this.setState({ todos: _result });
+        if (key === "Enter") { this.PostChangeLine(_id, _text); }
     }
 
     public render(): JSX.Element {
         let contents: JSX.Element = this.state.loading
             ? <p><em>Loading...</em></p>
-            : Todos.renderTodosTable(this.state.todos);
+            : <TodosOrderBy
+                todos={this.state.todos}
+                orderBy={this.state.orderBy}
+                angle={this.state.angle}
+                handleEditTable={this.handleEditTable}
+                handleActive={this.handleActive}
+                handleAngle={this.handleAngle}
+                handleChangeLine={this.handleChangeLine} />;
 
         let newTodoContent: JSX.Element = this.state.newTodo
-            ? (
-                <div className="form-row add-todo">
-                    <div className="col-9">
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder="Enter a new task"
-                            onChange={(event: React.FormEvent<HTMLInputElement>) => this.textAddChange(event)}
-                            onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => this.todoEnter(event)} />
-                    </div>
-                    <div
-                        className="col-3 btn-group btn-group-sm"
-                        role="group">
-                        <button type="button" className="btn btn-danger"
-                            onClick={() => this.radioChange(priorityTask.urgent)}>Urgent</button>
-                        <button type="button" className="btn btn-warning"
-                            onClick={() => this.radioChange(priorityTask.attention)}>Attention</button>
-                        <button type="button" className="btn btn-success"
-                            onClick={() => this.radioChange(priorityTask.relax)}>Relax</button>
-                        <button type="button" className="btn btn-light"
-                            onClick={() => this.radioChange(priorityTask.none)}>None</button>
-                    </div>
-                </div>
-            )
-            : <div></div>;
+            ? <TodosAdd
+                handleChangeText={this.handleChangeText}
+                handleEscText={this.handleEscText}
+                handleRadioChange={this.handleRadioChange} />
+            : <div />;
 
         return (
             <div>
                 <h1>Todo List</h1>
                 <p>This component demonstrates fetching data from the server with sqlite database.</p>
                 {newTodoContent}
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th className="">
-                                <button type="submit" className={Todos.orderByCSSButton(orderBy.priotity)}
-                                    onClick={() => Todos.prototype.orderBy(orderBy.priotity)}>Priority</button></th>
-                            <th className="col-9">
-                                <button type="submit" className={Todos.orderByCSSButton(orderBy.description)}
-                                    onClick={() => Todos.prototype.orderBy(orderBy.description)}>Description</button></th>
-                            <th className="">
-                                <button type="submit" className={Todos.orderByCSSButton(orderBy.date)}
-                                    onClick={() => Todos.prototype.orderBy(orderBy.date)}>Date</button></th>
-                            <th className=""></th>
-                        </tr>
-                    </thead>
-                    {contents}
-                </table>
+                {contents}
                 <div className="plus-button">
                     <button
                         type="button"
@@ -188,61 +181,6 @@ export class Todos extends React.Component<RouteComponentProps<{}>, ITodos> {
                         className="btn btn-primary btn-circle"><FontAwesomeIcon icon="plus" /></button>
                 </div>
             </div>
-        );
-    }
-
-    private static printText(_todos: ITodo): JSX.Element {
-        return (
-            _todos.active ?
-                <p><del>{_todos.text}</del></p> :
-                <p onClick={() => Todos.prototype.editText(_todos.id)}>{_todos.text}</p>
-        );
-    }
-
-    private static printPriority(_priority: number): JSX.Element {
-        switch (_priority) {
-            case 1:
-                return <h4><span className="badge badge-warning">Attention</span></h4>;
-                break;
-            case 2:
-                return <h4><span className="badge badge-success">Relax</span></h4>;
-                break;
-            default:
-                return <h4><span className="badge badge-danger">Urgent</span></h4>;
-                break;
-        }
-    }
-
-    private static angleOrder(_angle: boolean): void {
-        console.log("passou angle");
-        /*return (
-            _angle ?
-                <FontAwesomeIcon icon="angle-down" /> :
-                <FontAwesomeIcon icon="angle-up" />
-        );*/
-    }
-
-    private static orderByCSSButton(_orderBy: orderBy): string {
-        // return Todos.prototype.state.orderBy === _orderBy ? "btn btn-outline-primary btn-sm" : "btn btn-light btn-sm";
-        return "btn btn-light btn-sm";
-    }
-
-    private static renderTodosTable(todos: ITodo[]): JSX.Element {
-        return (
-            <tbody>
-                {todos.map(todos =>
-                    <tr key={todos.id}>
-                        <td>{Todos.printPriority(todos.priority)}</td>
-                        <td>{Todos.printText(todos)}</td>
-                        <td>{todos.date}</td>
-                        {todos.active ?
-                            <td><button type="submit" className="btn btn-secondary btn-sm"
-                                onClick={() => Todos.prototype.activeDone(todos.id, todos.active)}>Active</button></td> :
-                            <td><button type="submit" className="btn btn-primary btn-sm"
-                                onClick={() => Todos.prototype.activeDone(todos.id, todos.active)}>Done</button></td>}
-                    </tr>
-                )}
-            </tbody>
         );
     }
 }

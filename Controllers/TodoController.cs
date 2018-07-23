@@ -26,22 +26,42 @@ namespace aspnet_react_sqlite.Controllers
             switch (_orderby)
             {
                 case 1:
-                    if (_ascend) { return _return.Todos.OrderBy(x => x.Priority).ThenBy(x => x.Text).ThenBy(x => x.Date).ThenBy(x => x.Active).AsEnumerable(); }
-                    else { return _return.Todos.OrderByDescending(x => x.Priority).ThenBy(x => x.Text).ThenBy(x => x.Date).ThenBy(x => x.Active).AsEnumerable(); }
-                case 2:
-                    if (_ascend) { return _return.Todos.OrderBy(x => x.Date).ThenBy(x => x.Priority).ThenBy(x => x.Text).ThenBy(x => x.Active).AsEnumerable(); }
-                    else { return _return.Todos.OrderByDescending(x => x.Date).ThenBy(x => x.Priority).ThenBy(x => x.Text).ThenBy(x => x.Active).AsEnumerable(); }
-                default:
                     if (_ascend)
                     {
                         return (from x in _return.Todos
-                                orderby x.Active, x.Priority, x.Text, x.Date
+                                orderby x.Active, x.Priority
                                 select x).AsEnumerable();
                     }
                     else
                     {
                         return (from x in _return.Todos
-                                orderby x.Active, x.Priority, x.Text ascending, x.Date
+                                orderby x.Active, x.Priority ascending
+                                select x).AsEnumerable();
+                    }
+                case 2:
+                    if (_ascend)
+                    {
+                        return (from x in _return.Todos
+                                orderby x.Active, x.Date
+                                select x).AsEnumerable();
+                    }
+                    else
+                    {
+                        return (from x in _return.Todos
+                                orderby x.Active, x.Date ascending
+                                select x).AsEnumerable();
+                    }
+                default:
+                    if (_ascend)
+                    {
+                        return (from x in _return.Todos
+                                orderby x.Active, x.Text
+                                select x).AsEnumerable();
+                    }
+                    else
+                    {
+                        return (from x in _return.Todos
+                                orderby x.Active, x.Text ascending
                                 select x).AsEnumerable();
                     }
             }
@@ -57,12 +77,22 @@ namespace aspnet_react_sqlite.Controllers
             _return.SaveChanges();
         }
 
-        [HttpPost("[action]/{_Id}/{_active}")]
-        public void TodoActive(int _Id, bool _active)
+        [HttpPost("[action]/{_Id}")]
+        public void TodoActive(int _Id)
         {
             var _return = new ApplicationDBContext(_context);
             var _todos = _return.Todos.FirstOrDefault(x => x.Id == _Id);
-            _todos.Active = !_active;
+            _todos.Active = !_todos.Active;
+            _return.Todos.Update(_todos);
+            _return.SaveChanges();
+        }
+
+        [HttpPost("[action]/{_Id}/{_Text}")]
+        public void TodoEditText(int _Id, string _Text)
+        {
+            var _return = new ApplicationDBContext(_context);
+            var _todos = _return.Todos.FirstOrDefault(x => x.Id == _Id);
+            _todos.Text = _Text;
             _return.Todos.Update(_todos);
             _return.SaveChanges();
         }

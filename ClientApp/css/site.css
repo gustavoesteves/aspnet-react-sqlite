@@ -134,3 +134,7 @@ i.glyphicon.glyphicon-plus {
     bottom: 20px;
     right: 20px;
 }
+
+.edit-cursor {
+    cursor: pointer;
+}
