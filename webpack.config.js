@@ -9,7 +9,6 @@ module.exports = (env) => {
     return [{
         stats: { modules: false },
         entry: { 'main': './ClientApp/boot.tsx' },
-        devtool: 'source-map',
         resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
         output: {
             path: path.join(__dirname, bundleOutputDir),
